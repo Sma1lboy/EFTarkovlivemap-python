@@ -34,12 +34,15 @@ def delete_useless_element(driver):
     for element in elements:
         if element:
             driver.execute_script("arguments[0].remove();", element)
-
     return
-if __name__ == "__main__":
+
+def fetchImage(map:str):
+    # options = webdriver.ChromeOptions();
+    # options.add_argument("--headless")
+    # driver = webdriver.Chrome(options)
     driver = webdriver.Chrome()
-    driver.get("https://tarkov-market.com/maps/factory")
-    
+    driver.get("https://tarkov-market.com/maps/" + map)
+
     # get map ready
     button = driver.find_element(By.XPATH, "//*[@id=\"__nuxt\"]/div/div/div[2]/div/div/div[1]/div/button")
     time.sleep(1)
@@ -48,9 +51,12 @@ if __name__ == "__main__":
     # input.send_keys(get_position_file())
 
     delete_useless_element(driver)
-    # screenshot map
-    image = driver.get_screenshot_as_png()
-    with open("screenshot.png","wb") as file :
-        file.write(image)
-    print()
+    res = driver.get_screenshot_as_png()
     driver.quit()
+    return res;
+
+
+if __name__ == "__main__":
+   image = fetchImage('factory')
+   with open("screenshot.png", "wb") as file:
+       file.write(image)
