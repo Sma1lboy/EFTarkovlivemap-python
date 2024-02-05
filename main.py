@@ -10,6 +10,7 @@ from pathlib import Path
 import json
 import traceback
 import atexit
+import tkinter as tk
 
 path = Path(os.path.expanduser("~")) / 'Documents' / 'Escape from Tarkov' / 'Screenshots'
 
@@ -55,8 +56,22 @@ def fetchImage(map:str):
     driver.quit()
     return res;
 
+def getConfig():
+    global _config;    
+    with open("config.json", 'r') as file:
+        _config = json.loads(file.read())
+
+    print(_config["isAutoRefresh"])
+
+def loopPressKeyboard():
+    def onHotKeyPress():
+
+        return
+    
+    kb.add_hotkey("F9", print, args=('triggered', 'hotkey'))
 
 if __name__ == "__main__":
-   image = fetchImage('factory')
-   with open("screenshot.png", "wb") as file:
-       file.write(image)
+    # window = tk.Tk("projectpay")
+    loopPressKeyboard()
+    kb.send("F9")
+    kb.wait()
