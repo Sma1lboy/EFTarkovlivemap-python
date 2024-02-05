@@ -1,6 +1,7 @@
 from selenium import  webdriver
 from selenium.webdriver.common.by import By
 
+import threading
 import requests
 import keyboard as kb
 import time
@@ -56,22 +57,28 @@ def fetchImage(map:str):
     driver.quit()
     return res;
 
-def getConfig():
-    global _config;    
+def get_config():
+    global _config, screenshotKey, isAutoRefresh, autoRefreshDuration, currMap;    
     with open("config.json", 'r') as file:
         _config = json.loads(file.read())
+    screenshotKey = _config["screenshotKey"].upper()
+    isAutoRefresh = _config["isAutoRefresh"]
+    autoRefreshDuration = _config["autoRefreshDuration"]
+    currMap = _config["currMap"]
+    print("config load correctly...")
 
-    print(_config["isAutoRefresh"])
-
-def loopPressKeyboard():
+def setup_screenshot_key(key:str):
     def onHotKeyPress():
-
+        print("pressed")
+        fetchImage(currMap)
         return
-    
-    kb.add_hotkey("F9", print, args=('triggered', 'hotkey'))
+    kb.add_hotkey(key.upper(), onHotKeyPress)
 
 if __name__ == "__main__":
-    # window = tk.Tk("projectpay")
-    loopPressKeyboard()
-    kb.send("F9")
-    kb.wait()
+    get_config()
+    setup_screenshot_key(screenshotKey)
+    while True:
+        
+        if isAutoRefresh:
+            kb.press_and_release(screenshotKey)
+            thread = threading.Thread(target=fetchImage, args=currMap).start()
