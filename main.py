@@ -32,7 +32,15 @@ def get_position_file():
     return res
 
 
-def delete_useless_element(driver):
+"""Delete useless element for screenshot, and make the marker more easy to see"""
+
+
+def organize_element(driver: webdriver.Chrome):
+
+    marker = driver.find_element(By.XPATH, '//*[@id="map"]/div')
+    driver.execute_script("arguments[0].style.width=30px", marker)
+    driver.execute_script("arguments[0].style.height=30px", marker)
+
     leftPane = driver.find_element(
         By.XPATH, "/html/body/div/div/div/div[2]/div/div/div[2]"
     )
@@ -57,9 +65,9 @@ def fetchImage(map: str):
     global driver
     try:
         if "driver" not in globals():
-            options = webdriver.ChromeOptions()
-            options.add_argument("--headless")
-            driver = webdriver.Chrome(options)
+            # options = webdriver.ChromeOptions()
+            # options.add_argument("--headless")
+            driver = webdriver.Chrome()
         if "driver" in globals() and driver.current_url != (
             "https://tarkov-market.com/maps/" + map
         ):
@@ -75,11 +83,13 @@ def fetchImage(map: str):
         )
         # Todo dev version, uncomment this later
         # input.send_keys(get_position_file())
-        delete_useless_element(driver)
+        organize_element(driver)
         res = driver.get_screenshot_as_png()
+        with open("test.png", "wb") as file:
+            file.write(res)
+        return res
     except:
         driver.quit()
-    return res
 
 
 def get_config():
@@ -105,18 +115,24 @@ def keyboard_press_event(e: kb.KeyboardEvent):
         statusLabel.config(text="starting...")
         print("start auto refresh right now")
     elif e.name == screenshotKey.lower():
-        image = Image.open(io.BytesIO(fetchImage(currMap)))
-        image = image.resize((300, 300))
-        image = ImageTk.PhotoImage(image)
+        image = get_image()
         livemapWindow.after(0, update_image_label, image)
         print("taking a picture")
+
+
+def get_image():
+    image = Image.open(io.BytesIO(fetchImage(currMap)))
+    image = image.resize((300, 270))
+    image = ImageTk.PhotoImage(image)
+    return image
 
 
 def keyboard_listener():
     kb.on_press(keyboard_press_event)
     while True:
         if isAutoRefresh:
-            fetchImage(currMap)
+            image = get_image()
+            update_image_label(image)
         time.sleep(2)
 
 
@@ -137,6 +153,7 @@ def create_livemap_window():
     global livemapWindow, imageLabel
     livemapWindow = tk.Toplevel()
     livemapWindow.attributes("-topmost", True)
+    # livemapWindow.resizable((False, False))
     livemapWindow.geometry("+0+0")
     imageLabel = tk.Label(master=livemapWindow)
     imageLabel.pack()
