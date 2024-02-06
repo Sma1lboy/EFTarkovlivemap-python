@@ -1,6 +1,6 @@
 {
     "screenshotKey": "F9",
     "currMap": "factory",
-    "isAutoRefresh": true,
+    "isAutoRefresh": false,
     "autoRefreshDuration": 2
 }
