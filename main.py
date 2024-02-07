@@ -86,11 +86,14 @@ def fetchImage(map: str):
         # inputForm.send_keys(get_position_file())
         organize_element(driver)
         res = driver.get_screenshot_as_png()
-        with open("test.png", "wb") as file:
-            file.write(res)
+        time.sleep(0.5)  # wait for processing
         return res
-    except:
-        driver.quit()
+    except Exception as err:
+        print(f"Unexpected {err=}, {type(err)=}")
+        raise
+    finally:
+        if driver != None:
+            driver.quit()
 
 
 def get_config():
@@ -122,10 +125,14 @@ def keyboard_press_event(e: kb.KeyboardEvent):
 
 
 def get_image():
-    image = Image.open(io.BytesIO(fetchImage(currMap)))
-    image = image.resize((300, 270))
-    image = ImageTk.PhotoImage(image)
-    return image
+    try:
+        image = Image.open(io.BytesIO(fetchImage(currMap)))
+        image = image.resize((300, 270))
+        image = ImageTk.PhotoImage(image)
+        return image
+    except:
+        print("cannot print image")
+        return None
 
 
 def keyboard_listener():
@@ -146,6 +153,8 @@ def setup_kb_thread():
 
 
 def update_image_label(image):
+    if image == None:
+        return
     global imageLabel
     imageLabel.config(image=image)
     imageLabel.image = image
