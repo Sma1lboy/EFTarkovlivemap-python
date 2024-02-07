@@ -38,8 +38,9 @@ def get_position_file():
 def organize_element(driver: webdriver.Chrome):
 
     marker = driver.find_element(By.XPATH, '//*[@id="map"]/div')
-    driver.execute_script("arguments[0].style.width=30px", marker)
-    driver.execute_script("arguments[0].style.height=30px", marker)
+    print("here is marker", marker)
+    driver.execute_script("arguments[0].style.width='30px'", marker)
+    driver.execute_script("arguments[0].style.height='30px'", marker)
 
     leftPane = driver.find_element(
         By.XPATH, "/html/body/div/div/div/div[2]/div/div/div[2]"
@@ -78,11 +79,11 @@ def fetchImage(map: str):
             )
             time.sleep(0.5)
             button.click()
-        input = driver.find_element(
+        inputForm = driver.find_element(
             By.XPATH, '//*[@id="__nuxt"]/div/div/div[2]/div/div/div[1]/div/input'
         )
         # Todo dev version, uncomment this later
-        # input.send_keys(get_position_file())
+        # inputForm.send_keys(get_position_file())
         organize_element(driver)
         res = driver.get_screenshot_as_png()
         with open("test.png", "wb") as file:
@@ -128,12 +129,13 @@ def get_image():
 
 
 def keyboard_listener():
+    global autoRefreshDuration
     kb.on_press(keyboard_press_event)
     while True:
         if isAutoRefresh:
             image = get_image()
             update_image_label(image)
-        time.sleep(2)
+        time.sleep(autoRefreshDuration)
 
 
 def setup_kb_thread():
@@ -162,7 +164,7 @@ def create_livemap_window():
 def create_main_window():
     window = tk.Tk()
     window.title("EFTarkov Livemap")
-    introductionText = tk.Label(text="")
+    # introductionText = tk.Label(text="")
 
     currKeyFrame = tk.Frame(master=window)
     currKeyFrame.grid()
@@ -174,7 +176,7 @@ def create_main_window():
     tk.Label(master=currKeyFrame, text="the current key you are using: ").grid(
         sticky="w", row=1, column=0
     )
-    entry = tk.Entry()
+    entry = tk.Entry(master=currKeyFrame)
     entry.insert(0, screenshotKey)
     entry.grid(row=1, column=1)
 
@@ -194,7 +196,7 @@ def create_main_window():
         "Street of Tarkov": "streets",
         "The Lab": "lab",
     }
-    map_opts = [key for key, value in map_opts_dict.items()]
+    map_opts = [key for key, _ in map_opts_dict.items()]
     mapCombobox["values"] = map_opts
     mapCombobox.current(0)  # setup default map
     mapCombobox.grid(row=2, column=1)
@@ -208,7 +210,7 @@ def create_main_window():
     tk.Label(text="current status: ").grid(sticky="w", row=3, column=0)
     global statusLabel
     statusLabel = tk.Label(text="Not start")
-    statusLabel.grid(row=3, column=1)
+    statusLabel.grid(sticky="w", row=3, column=1)
     return window
 
 
