@@ -9,8 +9,8 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
 
+import customtkinter as ck
 import keyboard as kb
-import sv_ttk
 from PIL import Image, ImageTk
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -162,37 +162,38 @@ def update_image_label(image):
 
 def create_livemap_window():
     global livemapWindow, imageLabel
-    livemapWindow = tk.Toplevel()
+    livemapWindow = ck.CTkToplevel()
     livemapWindow.attributes("-topmost", True)
     # livemapWindow.resizable((False, False))
     livemapWindow.geometry("+0+0")
-    imageLabel = tk.Label(master=livemapWindow)
+    imageLabel = ck.CTkLabel(master=livemapWindow)
     imageLabel.pack()
 
 
 def create_main_window():
-    window = tk.Tk()
+    window = ck.CTk()
     window.title("EFTarkov Livemap")
     # introductionText = tk.Label(text="")
 
-    currKeyFrame = tk.Frame(master=window)
+    currKeyFrame = ck.CTkFrame(master=window)
     currKeyFrame.grid()
-    tk.Label(
+
+    ck.CTkLabel(
         master=currKeyFrame,
         text="Welcome to Tarkov Live Map, the first version of this open source software.\nUse F5 to stop the program, F6 to start livemap,\n or you can use the custom screenshot button to update the map location when you want.",
         justify=tk.LEFT,
     ).grid(sticky="w", row=0, column=0)
-    tk.Label(master=currKeyFrame, text="the current key you are using: ").grid(
+    ck.CTkLabel(master=currKeyFrame, text="the current key you are using: ").grid(
         sticky="w", row=1, column=0
     )
-    entry = tk.Entry(master=currKeyFrame)
+    entry = ck.CTkEntry(master=currKeyFrame)
     entry.insert(0, screenshotKey)
     entry.grid(row=1, column=1)
 
-    tk.Label(master=currKeyFrame, text="current map choice: ").grid(
+    ck.CTkLabel(master=currKeyFrame, text="current map choice: ").grid(
         sticky="w", row=2, column=0
     )
-    mapCombobox = ttk.Combobox(master=currKeyFrame, state="readonly")
+    mapCombobox = ck.CTkComboBox(master=currKeyFrame, state="readonly")
     map_opts_dict = {
         "Factory": "factory",
         "Ground Zero": "ground-zero",
@@ -207,7 +208,8 @@ def create_main_window():
     }
     map_opts = [key for key, _ in map_opts_dict.items()]
     mapCombobox["values"] = map_opts
-    mapCombobox.current(0)  # setup default map
+
+    # mapCombobox.current(0)  # setup default map
     mapCombobox.grid(row=2, column=1)
 
     def map_selected_event(e):
@@ -216,9 +218,11 @@ def create_main_window():
         print("current map is ", currMap)
 
     mapCombobox.bind("<<ComboboxSelected>>", map_selected_event)
-    tk.Label(text="current status: ").grid(sticky="w", row=3, column=0)
+    ck.CTkLabel(master=currKeyFrame, text="current status: ").grid(
+        sticky="w", row=3, column=0
+    )
     global statusLabel
-    statusLabel = tk.Label(text="Not start")
+    statusLabel = ck.CTkLabel(master=currKeyFrame, text="Not start")
     statusLabel.grid(sticky="w", row=3, column=1)
     return window
 
@@ -226,6 +230,8 @@ def create_main_window():
 if __name__ == "__main__":
     global isAutoRefresh, screenshotKey, currMap, driver
     try:
+        ck.set_appearance_mode("system")
+        ck.set_default_color_theme("green")
         # init config
         get_config()
         # craete main window
@@ -234,7 +240,6 @@ if __name__ == "__main__":
         create_livemap_window()
         setup_kb_thread()
 
-        sv_ttk.set_theme("dark")
         window.mainloop()
     finally:
         if "driver" in globals():
