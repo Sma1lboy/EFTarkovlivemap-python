@@ -156,7 +156,7 @@ def update_image_label(image):
     if image == None:
         return
     global imageLabel
-    imageLabel.config(image=image)
+    imageLabel.configure(image=image)
     imageLabel.image = image
 
 
@@ -193,7 +193,7 @@ def create_main_window():
     ck.CTkLabel(master=currKeyFrame, text="current map choice: ").grid(
         sticky="w", row=2, column=0
     )
-    mapCombobox = ck.CTkComboBox(master=currKeyFrame, state="readonly")
+
     map_opts_dict = {
         "Factory": "factory",
         "Ground Zero": "ground-zero",
@@ -207,8 +207,8 @@ def create_main_window():
         "The Lab": "lab",
     }
     map_opts = [key for key, _ in map_opts_dict.items()]
-    mapCombobox["values"] = map_opts
-
+    mapCombobox = ck.CTkComboBox(master=currKeyFrame, state="readonly", values=map_opts)
+    mapCombobox.set("Factory")
     # mapCombobox.current(0)  # setup default map
     mapCombobox.grid(row=2, column=1)
 
