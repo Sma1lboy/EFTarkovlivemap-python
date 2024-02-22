@@ -1,5 +1,5 @@
 # EFTarkovLiveMap-python
-
+WIP
 ## Overview
 
 `EFTarkovLiveMap-python` is an innovative tool designed for the gaming community of Escape From Tarkov (EFT). This Python-based project offers a dynamic live map feature that enhances players' situational awareness and strategic planning capabilities. With the latest addition of the modem UI, users can now experience an even more immersive and interactive map navigation.
